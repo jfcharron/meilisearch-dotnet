@@ -543,5 +543,21 @@ namespace Meilisearch
                 .ReadFromJsonAsync<ISearchable<T>>(cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Searches for documents similar to the document specified in the <paramref name="query"/>.
+        /// </summary>
+        /// <param name="query">The query to send to the server.</param>
+        /// <param name="cancellationToken">The cancellation token for this call.</param>
+        /// <typeparam name="T">Type representing the expected returned documents.</typeparam>
+        /// <returns>Returns search results from the server.</returns>
+        public async Task<ISearchable<T>> SearchSimilarDocuments<T>(SearchSimilarDocumentsQuery query, CancellationToken cancellationToken = default)
+        {
+            var response = await _http.PostAsJsonAsync($"indexes/{Uid}/similar", query, Constants.JsonSerializerOptionsRemoveNulls,
+                cancellationToken).ConfigureAwait(false);
+
+            return await response.Content.ReadFromJsonAsync<ISearchable<T>>(cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
+        }
     }
 }

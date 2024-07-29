@@ -91,5 +91,6 @@ namespace Meilisearch
         /// </summary>
         [JsonPropertyName("proximityPrecision")]
         public string ProximityPrecision { get; set; }
+        
     }
 }

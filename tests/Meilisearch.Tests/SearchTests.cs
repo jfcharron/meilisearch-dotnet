@@ -14,8 +14,10 @@ namespace Meilisearch.Tests
         private Index _indexForFaceting;
         private Index _indexWithIntId;
         private Index _productIndexForDistinct;
+        private Index _searchSimilarIndex;
 
         private readonly TFixture _fixture;
+
 
         public SearchTests(TFixture fixture)
         {
@@ -30,6 +32,8 @@ namespace Meilisearch.Tests
             _indexWithIntId = await _fixture.SetUpBasicIndexWithIntId("IndexWithIntId-SearchTests");
             _nestedIndex = await _fixture.SetUpIndexForNestedSearch("IndexForNestedDocs-SearchTests");
             _productIndexForDistinct = await _fixture.SetUpIndexForDistinctProductsSearch("IndexForDistinctProducts-SearchTests");
+            _searchSimilarIndex
+                = await _fixture.SetUpIndexForSimilarSearch("SearchSimilar-SearchTests");
         }
 
         public Task DisposeAsync() => Task.CompletedTask;
@@ -524,6 +528,16 @@ namespace Meilisearch.Tests
             };
             var products = await _productIndexForDistinct.SearchAsync<Product>("", searchQuery);
             products.Hits.Count.Should().Be(6);
+        }
+
+        [Fact]
+        public async Task SimilarSearch()
+        {
+            var query = new SearchSimilarDocumentsQuery("1");
+            var products = await _searchSimilarIndex.SearchSimilarDocuments<Product>(query);
+
+            products.Hits.Count.Should().BeGreaterThan(0);
+
         }
     }
 }
